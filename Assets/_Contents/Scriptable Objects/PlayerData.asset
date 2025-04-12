@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   m_moveSpeed: 5
+  m_onAirMoveSpeed: 0.6
   m_jumpForce: 65
   m_jumpDuration: 0.2
   m_jumpMaxHeight: 2

@@ -15,8 +15,8 @@ namespace Kuraokami
 
         protected virtual void MoveInAir(Vector2 _direction)
         {
-            var moveDir = new Vector3(_direction.x, 0f, 0f).normalized;
-            var velocity = new Vector3(moveDir.x * _data.m_moveSpeed, _rigidbody.linearVelocity.y, 0f);
+            var velocity = _rigidbody.linearVelocity;
+            velocity.x = _direction.x * _data.AirMoveControl;
             _rigidbody.linearVelocity = velocity;
         }
     }
