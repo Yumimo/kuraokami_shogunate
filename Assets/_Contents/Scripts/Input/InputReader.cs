@@ -9,9 +9,10 @@ namespace Kuraokami
     public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions
     {
         public event UnityAction<Vector2> Move = delegate { };
-        public event UnityAction<Vector2> Jump = delegate { };
+        public event UnityAction<bool> Jump = delegate { };
 
         private InputSystem_Actions inputAction;
+        public bool IsJumpPressed { get; private set; }
 
         public Vector3 Direction => inputAction.Player.Move.ReadValue<Vector2>();
         private void OnEnable()
@@ -56,7 +57,17 @@ namespace Kuraokami
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            Jump?.Invoke(context.ReadValue<Vector2>());
+            switch (context.phase)
+            {
+                case InputActionPhase.Started:
+                    IsJumpPressed = true;
+                    Jump?.Invoke(true);
+                    break;
+                case InputActionPhase.Canceled:
+                    IsJumpPressed = false;
+                    Jump?.Invoke(false);
+                    break;
+            }
         }
 
         public void OnPrevious(InputAction.CallbackContext context)
