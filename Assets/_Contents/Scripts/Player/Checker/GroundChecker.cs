@@ -11,15 +11,15 @@ namespace Kuraokami
         [SerializeField]public bool IsGrounded { get; private set; }
         private void Update()
         {
-           IsGrounded = Physics.SphereCast(transform.position, m_groundCheckDistance, Vector3.down, out _, m_groundCheckDistance,m_groundLayer);
+           IsGrounded = Physics.CheckSphere(transform.position, m_radius, m_groundLayer);
         }
 
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = IsGrounded? Color.green : Color.red;
-            Gizmos.DrawWireSphere(transform.position, m_groundCheckDistance);
-            var endPoint = transform.position + Vector3.down * m_groundCheckDistance;
-            Gizmos.DrawLine(transform.position, endPoint);
+            Gizmos.DrawWireSphere(transform.position, m_radius);
+            // var endPoint = transform.position + Vector3.down * m_groundCheckDistance;
+            // Gizmos.DrawLine(transform.position, endPoint);
 
         }
     }

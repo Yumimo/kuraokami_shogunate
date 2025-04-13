@@ -4,7 +4,7 @@ namespace Kuraokami
 {
     public class FallingState : OnAirState
     {
-        public  FallingState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, Animator animator, int animationHash) : base(player, stateMachine, input, data, animator, animationHash)
+        public  FallingState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, int animationHash) : base(player, stateMachine, input, data, animationHash)
         {
         }
 

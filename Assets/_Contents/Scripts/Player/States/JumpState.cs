@@ -4,7 +4,7 @@ namespace Kuraokami
 {
     public class JumpState: OnAirState
     {
-        public JumpState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, Animator animator, int animationHash) : base(player, stateMachine, input, data, animator, animationHash)
+        public JumpState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, int animationHash) : base(player, stateMachine, input, data, animationHash)
         {
         }
         private float _jumpVelocity;

@@ -4,7 +4,7 @@ namespace Kuraokami
 {
     public class OnGroundState : BaseState
     {
-        protected OnGroundState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data,Animator animator, int animationHash) : base(player, stateMachine, input, data, animator, animationHash)
+        protected OnGroundState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, int animationHash) : base(player, stateMachine, input, data, animationHash)
         {
         }
 

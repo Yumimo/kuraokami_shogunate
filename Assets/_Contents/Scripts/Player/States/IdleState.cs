@@ -4,7 +4,7 @@ namespace Kuraokami
 {
     public class IdleState : OnGroundState
     {
-        public IdleState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, Animator animator, int animationHash) : base(player, stateMachine, input, data, animator, animationHash)
+        public IdleState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, int animationHash) : base(player, stateMachine, input, data, animationHash)
         {
         }
         public override void OnUpdate()

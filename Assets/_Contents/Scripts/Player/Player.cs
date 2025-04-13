@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Kuraokami
@@ -8,14 +7,22 @@ namespace Kuraokami
     {
         [SerializeField] private InputReader m_inputReader;
         [SerializeField] private PlayerData m_data;
+        [SerializeField] private GameObject m_humanForm;
         [SerializeField] private GroundChecker m_groundChecker;
         [SerializeField] private Animator m_animator;
+        
+        
+        [SerializeField] private AnimalFormClass[] m_animalForms;
 
+        private AnimalFormClass _currentFormClass;
         private Rigidbody _rigidbody;
         private float _jumpVelocity;
         private Vector2 _movementInput;
+        private bool _isAnimalForm;
 
         public bool IsGrounded => m_groundChecker.IsGrounded;
+        public AnimalFormClass CurrentFormClass => _currentFormClass;
+        public Animator CurrentAnimator => _isAnimalForm ? _currentFormClass.FormAnimator : m_animator;
         public Rigidbody PlayerRigidbody => _rigidbody;
 
         #region Animation HASH
@@ -23,6 +30,12 @@ namespace Kuraokami
         private readonly int _locomationHash = Animator.StringToHash("Speed");
         private readonly int _jumpHash = Animator.StringToHash("IsJumping");
         private readonly int _fallHash = Animator.StringToHash("IsFalling");
+
+        #endregion
+
+        #region Animal Forms
+
+        private const string _FOX = "FOX";
 
         #endregion
 
@@ -57,15 +70,16 @@ namespace Kuraokami
         private void OnEnable()
         {
             m_inputReader.Jump += OnJump;
+            m_inputReader.Crouch += OnCrouch;
         }
 
         private void SetupStates()
         {
             _stateMachine = new PlayerStateMachine();
-            Idle = new IdleState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
-            Move = new MoveState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
-            Jump = new JumpState(this, _stateMachine, m_inputReader, m_data, m_animator, _jumpHash);
-            Falling = new FallingState(this, _stateMachine, m_inputReader, m_data, m_animator, _fallHash);
+            Idle = new IdleState(this, _stateMachine, m_inputReader, m_data, _locomationHash);
+            Move = new MoveState(this, _stateMachine, m_inputReader, m_data, _locomationHash);
+            Jump = new JumpState(this, _stateMachine, m_inputReader, m_data, _jumpHash);
+            Falling = new FallingState(this, _stateMachine, m_inputReader, m_data, _fallHash);
             
             _stateMachine.Initialize(Idle);
         }
@@ -79,6 +93,26 @@ namespace Kuraokami
 
             JumpTimer.OnTimerStart += () => _stateMachine.ChangeState(Jump);
             JumpTimer.OnTimerStop += () => JumpCooldownTimer.Start(); 
+        }
+        
+        private void OnCrouch()
+        {
+            Debug.Log("Crouch");
+            _isAnimalForm = !_isAnimalForm;
+            if (_isAnimalForm)
+            {
+                foreach (var forms in m_animalForms)
+                {
+                    if (forms.Id != _FOX) continue;
+                    _currentFormClass = forms;
+                    forms.OnTransform(m_humanForm);
+                }
+            }
+            else
+            {
+                _currentFormClass?.ReturnToOriginalForm();
+                _currentFormClass = null;
+            }
         }
 
         private void OnJump(bool arg0)
@@ -115,6 +149,7 @@ namespace Kuraokami
         private void OnDisable()
         {
             m_inputReader.Jump -= OnJump;
+            m_inputReader.Crouch -= OnCrouch;
         }
 
     }

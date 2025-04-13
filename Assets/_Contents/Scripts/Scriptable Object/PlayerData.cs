@@ -14,7 +14,7 @@ namespace Kuraokami
         public float m_jumpDuration;
         public float m_jumpMaxHeight;
         public float m_jumpCooldown;
-        private float m_jumpForceMultiplier = 1.2f;
+        public float m_jumpForceMultiplier = 1.2f;
 
         [Header("Gravity")]
         public float m_gravity = 9.81f;

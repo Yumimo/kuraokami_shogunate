@@ -9,25 +9,25 @@ namespace Kuraokami
         protected readonly PlayerStateMachine _stateMachine;
         protected readonly InputReader _input;
         protected readonly PlayerData _data;
-        protected readonly Animator _animator;
+        protected Animator _animator;
         
         protected readonly int _animationHash;
         
         protected Rigidbody _rigidbody;
 
-        protected BaseState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, Animator animator, int animationHash)
+        protected BaseState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, int animationHash)
         {
             _player = player;
             _stateMachine = stateMachine;
             _input = input;
             _data = data;
-            _animator = animator;
             _animationHash = animationHash;
         }
 
         public virtual void OnEnter()
         {
             Debug.Log($"Enter State: {this.GetType().Name})");
+            _animator = _player.CurrentAnimator;
             _rigidbody = _player.PlayerRigidbody;
         }
 
@@ -37,7 +37,6 @@ namespace Kuraokami
             if (!_player.IsGrounded && _rigidbody.linearVelocity.y < -0.01f)
             {
                 _stateMachine.ChangeState(_player.Falling);
-                Debug.Log("TEST ON BASE STATE");
             }
         }
 
