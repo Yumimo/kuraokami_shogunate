@@ -21,6 +21,8 @@ namespace Kuraokami
         #region Animation HASH
 
         private readonly int _locomationHash = Animator.StringToHash("Speed");
+        private readonly int _jumpHash = Animator.StringToHash("IsJumping");
+        private readonly int _fallHash = Animator.StringToHash("IsFalling");
 
         #endregion
 
@@ -40,6 +42,9 @@ namespace Kuraokami
         public CountdownTimer JumpCooldownTimer;
         
         #endregion
+        
+        [Header("Debugger")]
+        [SerializeField] private string _currentStateName;
 
         
         private void Awake()
@@ -59,8 +64,8 @@ namespace Kuraokami
             _stateMachine = new PlayerStateMachine();
             Idle = new IdleState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
             Move = new MoveState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
-            Jump = new JumpState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
-            Falling = new FallingState(this, _stateMachine, m_inputReader, m_data, m_animator, _locomationHash);
+            Jump = new JumpState(this, _stateMachine, m_inputReader, m_data, m_animator, _jumpHash);
+            Falling = new FallingState(this, _stateMachine, m_inputReader, m_data, m_animator, _fallHash);
             
             _stateMachine.Initialize(Idle);
         }
@@ -92,6 +97,7 @@ namespace Kuraokami
         private void Update()
         {
             _stateMachine?.CurrentState.OnUpdate();
+            _currentStateName = _stateMachine.CurrentState.GetType().Name;
             HandleTimer();
         }
         private void FixedUpdate()

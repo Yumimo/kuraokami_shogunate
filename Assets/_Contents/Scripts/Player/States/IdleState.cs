@@ -7,7 +7,6 @@ namespace Kuraokami
         public IdleState(Player player, PlayerStateMachine stateMachine, InputReader input, PlayerData data, Animator animator, int animationHash) : base(player, stateMachine, input, data, animator, animationHash)
         {
         }
-
         public override void OnUpdate()
         {
             base.OnUpdate();

@@ -34,9 +34,10 @@ namespace Kuraokami
         public virtual void OnUpdate()
         {
             Flip();
-            if (_rigidbody.linearVelocity.y < -0.01f)
+            if (!_player.IsGrounded && _rigidbody.linearVelocity.y < -0.01f)
             {
                 _stateMachine.ChangeState(_player.Falling);
+                Debug.Log("TEST ON BASE STATE");
             }
         }
 

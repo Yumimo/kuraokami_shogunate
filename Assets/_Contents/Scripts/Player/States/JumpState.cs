@@ -14,6 +14,7 @@ namespace Kuraokami
         {
             base.OnEnter();
             _jumpVelocity = 0;
+            _animator.SetBool(_animationHash, true);
         }
         public override void OnFixedUpdate()
         {
@@ -48,6 +49,12 @@ namespace Kuraokami
             }
 
             _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, _jumpVelocity, _rigidbody.linearVelocity.z);
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            _animator.SetBool(_animationHash, false);
         }
     }
 }

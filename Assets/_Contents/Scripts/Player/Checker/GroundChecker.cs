@@ -16,10 +16,11 @@ namespace Kuraokami
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = IsGrounded? Color.green : Color.red;
             Gizmos.DrawWireSphere(transform.position, m_groundCheckDistance);
             var endPoint = transform.position + Vector3.down * m_groundCheckDistance;
             Gizmos.DrawLine(transform.position, endPoint);
+
         }
     }
 }
