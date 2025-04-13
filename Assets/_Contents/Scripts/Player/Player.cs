@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Kuraokami
@@ -14,15 +15,16 @@ namespace Kuraokami
         
         [SerializeField] private AnimalFormClass[] m_animalForms;
 
-        private AnimalFormClass _currentFormClass;
         private Rigidbody _rigidbody;
         private float _jumpVelocity;
         private Vector2 _movementInput;
-        private bool _isAnimalForm;
 
+        public bool IsFreezeInput { get; private set; }
+        public bool IsAnimalForm { get; set; }
+        public AnimalFormClass CurrentAnimalForm { get; set; }
         public bool IsGrounded => m_groundChecker.IsGrounded;
-        public AnimalFormClass CurrentFormClass => _currentFormClass;
-        public Animator CurrentAnimator => _isAnimalForm ? _currentFormClass.FormAnimator : m_animator;
+  
+        public Animator CurrentAnimator => IsAnimalForm ? CurrentAnimalForm.FormAnimator : m_animator;
         public Rigidbody PlayerRigidbody => _rigidbody;
 
         #region Animation HASH
@@ -35,7 +37,7 @@ namespace Kuraokami
 
         #region Animal Forms
 
-        private const string _FOX = "FOX";
+        public readonly string _FOX = "FOX";
 
         #endregion
 
@@ -53,6 +55,7 @@ namespace Kuraokami
         private List<Timer> _timers;
         public CountdownTimer JumpTimer;
         public CountdownTimer JumpCooldownTimer;
+        public CountdownTimer CharacterFreezeInputTimer;
         
         #endregion
         
@@ -70,7 +73,24 @@ namespace Kuraokami
         private void OnEnable()
         {
             m_inputReader.Jump += OnJump;
-            m_inputReader.Crouch += OnCrouch;
+        }
+
+        public void ToggleAnimalForm(string formName = "")
+        {
+            CharacterFreezeInputTimer.Start();
+            if (formName == "")
+            {
+                CurrentAnimalForm?.EndForm();
+                CurrentAnimalForm = null;
+                return;
+            }
+
+            var _form = m_animalForms.FirstOrDefault(form => form.Id == formName);
+            if (_form != null)
+            {
+                CurrentAnimalForm = _form;
+                _form.StartForm(m_humanForm);
+            }
         }
 
         private void SetupStates()
@@ -88,35 +108,25 @@ namespace Kuraokami
         {
             JumpTimer = new CountdownTimer(m_data.m_jumpDuration);
             JumpCooldownTimer = new CountdownTimer(m_data.m_jumpCooldown);
-            _timers = new List<Timer>(2) {JumpTimer, JumpCooldownTimer};
-
-
+            CharacterFreezeInputTimer = new CountdownTimer(m_data.m_characterFreezeInputTime);
+            _timers = new List<Timer>(3) {JumpTimer, JumpCooldownTimer, CharacterFreezeInputTimer};
+            
             JumpTimer.OnTimerStart += () => _stateMachine.ChangeState(Jump);
             JumpTimer.OnTimerStop += () => JumpCooldownTimer.Start(); 
-        }
-        
-        private void OnCrouch()
-        {
-            Debug.Log("Crouch");
-            _isAnimalForm = !_isAnimalForm;
-            if (_isAnimalForm)
+            
+            CharacterFreezeInputTimer.OnTimerStart += () => IsFreezeInput = true;
+            CharacterFreezeInputTimer.OnTimerStop += () =>
             {
-                foreach (var forms in m_animalForms)
-                {
-                    if (forms.Id != _FOX) continue;
-                    _currentFormClass = forms;
-                    forms.OnTransform(m_humanForm);
-                }
-            }
-            else
-            {
-                _currentFormClass?.ReturnToOriginalForm();
-                _currentFormClass = null;
-            }
+                IsFreezeInput = false;
+                _stateMachine?.ChangeState(Idle);
+            };
         }
 
         private void OnJump(bool arg0)
         {
+            if(IsFreezeInput)return;
+            
+            if(IsAnimalForm && !CurrentAnimalForm._data.CanJump)return;
             switch (arg0)
             {
                 case true when !JumpTimer.IsRunning && !JumpCooldownTimer.IsRunning && m_groundChecker.IsGrounded:
@@ -149,7 +159,6 @@ namespace Kuraokami
         private void OnDisable()
         {
             m_inputReader.Jump -= OnJump;
-            m_inputReader.Crouch -= OnCrouch;
         }
 
     }

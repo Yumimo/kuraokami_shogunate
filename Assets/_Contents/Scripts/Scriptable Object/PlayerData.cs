@@ -21,6 +21,9 @@ namespace Kuraokami
         public float m_jumpGravityMultiplier = 1.0f;
         public float m_fallGravityMultiplier = 2.0f;
 
+        [Header("Tools")] 
+        public float m_characterFreezeInputTime = 0.2f;
+
         public float AirMoveControl => m_moveSpeed * m_onAirMoveSpeed;
         
         public float JumpForce => m_jumpForce * m_jumpForceMultiplier;

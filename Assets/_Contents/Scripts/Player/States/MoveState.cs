@@ -10,6 +10,7 @@ namespace Kuraokami
 
         public override void OnFixedUpdate()
         {
+            base.OnFixedUpdate();
             OnMove();
         }
 

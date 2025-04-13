@@ -13,14 +13,17 @@ namespace Kuraokami
         public Animator FormAnimator => _formModel.GetComponent<Animator>();
 
         private GameObject _humanForm;
-        public void OnTransform(GameObject _human)
+
+        public Action OnTransformEvent;
+        public void StartForm(GameObject _human)
         {
             _humanForm = _human;
             _humanForm.SetActive(false);
             _formModel.SetActive(true);
+            OnTransformEvent?.Invoke();
         }
 
-        public void ReturnToOriginalForm()
+        public void EndForm()
         {
             _humanForm.SetActive(true);
             _formModel.SetActive(false);

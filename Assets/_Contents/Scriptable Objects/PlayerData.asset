@@ -22,3 +22,4 @@ MonoBehaviour:
   m_gravity: 9.81
   m_jumpGravityMultiplier: 0.8
   m_fallGravityMultiplier: 0.1
+  m_characterFreezeInputTime: 0.2
